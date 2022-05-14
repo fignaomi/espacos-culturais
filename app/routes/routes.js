@@ -3,114 +3,151 @@ const Espaco = require('../models/Espaco');
 
 module.exports = app => {
 
-    app.get('/api/espacos', (req, resp) => {
-        Espaco.listar(resp);
+    app.get('/api/espacos', (req, res) => {
+        Espaco.listar(res);
     });
 
-    app.get('/api/espacos/:id', (req, resp) => {
+    app.get('/api/espacos/:id', (req, res) => {
         const id = parseInt(req.params.id)
-        Espaco.buscaPorId(id, resp)
+        Espaco.buscaPorId(id, res)
     });
 
-    app.put('/api/espacos/:id', (req, resp) => {
+    app.put('/api/espacos/:id', (req, res) => {
         const id = parseInt(req.params.id)
         const espaco = req.body;
+        const schema = Joi.object({
+            nome: Joi.string().min(1).max(200).alphanum().required(),
+            rua: Joi.string().min(1).max(200).alphanum().required(),
+            numero: Joi.number().required(),
+            bairro: Joi.string().min(1).max(50).alphanum().required(),
+            cidade: Joi.string().min(1).max(50).alphanum().required(),
+            estado: Joi.string().min(2).max(2).alphanum().required(),
+            email: Joi.string().email().required(),
+            foto: Joi.string().max(200).alphanum().required()
 
-        Espaco.alteraPorId(id, espaco, resp);
+        });
+
+        const result = schema.validate(req.body);
+
+        if (result.error) return res.status(400).send(result.error.details[0].message);
+        Espaco.alteraPorId(id, espaco, res);
     });
     
-    app.post('/api/espacos/', (req, resp) => {
+    app.post('/api/espacos', (req, res) => {
+
+        const schema = Joi.object({
+            nome: Joi.string().min(1).max(200).alphanum().required(),
+            rua: Joi.string().min(1).max(200).alphanum().required(),
+            numero: Joi.number().required(),
+            bairro: Joi.string().min(1).max(50).alphanum().required(),
+            cidade: Joi.string().min(1).max(50).alphanum().required(),
+            estado: Joi.string().min(2).max(2).alphanum().required(),
+            email: Joi.string().email().required(),
+            foto: Joi.string().max(200).alphanum().required()
+
+        });
+
+        const result = schema.validate(req.body);
+
+        if (result.error) return res.status(400).send(result.error.details[0].message);
         const espaco = req.body;
-        Espaco.inserir(espaco, resp);
-       
+        res.send(espaco);
+        Espaco.inserir(espaco, res); 
         
-    });
-    app.delete('/api/espacos/:id', (req,resp) => {
+    })
+
+    app.delete('/api/espacos/:id', (req,res) => {
         const id = parseInt(req.params.id);
-        Espaco.remover(id, resp);
+        Espaco.remover(id, res);
     });
 
 };
-// app.get('/api/espacos/:id', (req, res) => {
-//     const espaco = espacos.find(espaco => espaco.id === parseInt(req.params.id))
-//     if (!espaco) return res.status(404).send("O espaco com ID especificado não foi encontrado");
-//     res.send(espaco);
-// });
 
+// ************codigo antigo****************
 
-// app.post('/api/espacos', (req, res) => {
+// app.get('/api/espacos', (req, res) => {
+//     res.status(200).send(espacoCultural);
 
-//     const schema = Joi.object({
-//         nome: Joi.string().min(1).max(200).alphanum().required(),
-//         rua: Joi.string().min(1).max(200).alphanum().required(),
-//         bairro: Joi.string().min(1).max(50).alphanum().required(),
-//         cidade: Joi.string().min(1).max(50).alphanum().required(),
-//         estado: Joi.string().min(2).max(2).alphanum().required(),
-//         email: Joi.string().min(1).max(50).alphanum().required(),
-//         link: Joi.string().min(3).max(150).alphanum().required(),
+//     app.get('/api/espacos/:id', (req, res) => {
+//         const espaco = espacoCultural.find(espaco => espaco.id === parseInt(req.params.id))
+//         if (!espaco) return res.status(404).send("O espaco cultural não foi encontrado");
+//         res.send(espaco);
 //     });
 
-//     const result = schema.validate(req.body);
-//     //console.log(result.error.details[0].message);
+    // app.post('/api/espacos', (req, res) => {
 
-//     if (result.error) return res.status(400).send(result.error.details[0].message);
+    //     const schema = Joi.object({
+    //         nome: Joi.string().min(1).max(200).alphanum().required(),
+    //         rua: Joi.string().min(1).max(200).alphanum().required(),
+    //         numero: Joi.number().required(),
+    //         bairro: Joi.string().min(1).max(50).alphanum().required(),
+    //         cidade: Joi.string().min(1).max(50).alphanum().required(),
+    //         estado: Joi.string().min(2).max(2).alphanum().required(),
+    //         email: Joi.string().email().required(),
+    //         foto: Joi.string().max(200).alphanum().required()
 
-//     const espaco = {
-//         id: espacos.length + 1,
-//         nome: req.body.nome,
-//         rua: req.body.rua,
-//         bairro: req.body.bairro,
-//         cidade: req.body.cidade,
-//         estado: req.body.estado,
-//         email: req.body.email,
-//         link: req.body.link
-//     }
-//     espacos.push(espaco);
-//     res.send(espaco);
-//     return;
-// })
+    //     });
 
+    //     const result = schema.validate(req.body);
 
+    //     if (result.error) return res.status(400).send(result.error.details[0].message);
 
-// app.put('/api/espacos/:id', (req, res) => {
-//     const espaco = espacos.find(espaco => espaco.id === parseInt(req.params.id));
-//     if (!espaco) return res.status(404).send("O espaco com o ID específico não foi encontrado!");
-//     const result = ValidataData(req.body);
-//     if (result.error) return res.status(400).send(result.error.details[0].message);
+    //     const espaco = {
+    //         id: espacoCultural.length + 1,
+    //         nome: req.body.nome,
+    //         rua: req.body.rua,
+    //         numero: req.body.numero,
+    //         bairro: req.body.bairro,
+    //         cidade: req.body.cidade,
+    //         estado: req.body.estado,
+    //         email: req.body.email,
+    //         foto: req.body.foto,
+    //     }
+    //     espacoCultural.push(espaco);
+    //     res.send(espaco);
+    //     return;
+    // })
+    // const ValidateData = (data) => {
+    //     const schema = Joi.object({
+    //         nome: Joi.string().min(1).max(200).alphanum().required(),
+    //         rua: Joi.string().min(1).max(200).alphanum().required(),
+    //         numero: Joi.number().required(),
+    //         bairro: Joi.string().min(1).max(50).alphanum().required(),
+    //         cidade: Joi.string().min(1).max(50).alphanum().required(),
+    //         estado: Joi.string().min(2).max(2).alphanum().required(),
+    //         email: Joi.string().email().required(),
+    //         foto: Joi.string().max(200).alphanum().required()
+    //     });
+    //     return schema.validate(data);
+    // }
+    // app.put('/api/espacos/:id', (req, res) => {
+    //     const espaco = espacoCultural.find(espaco => espaco.id === parseInt(req.params.id));
+    //     if (!espaco) return res.status(404).send("ID não foi encontrado!");
+    //     const result = ValidateData(req.body);
+    //     if (result.error) return res.status(400).send(result.error.details[0].message);
 
-//     espaco.nome = req.body.nome;
-//     espaco.rua = req.body.rua;
-//     espaco.bairro = req.body.bairro,
-//         espaco.cidade = req.body.cidade,
-//         espaco.estado = req.body.estado,
-//         espaco.email = req.body.email,
-//         espaco.link = req.body.link;
+    //     espaco.nome = req.body.nome;
+    //     espaco.rua = req.body.rua;
+    //     espaco.bairro = req.body.bairro,
+    //         espaco.cidade = req.body.cidade,
+    //         espaco.estado = req.body.estado,
+    //         espaco.email = req.body.email,
+    //         espaco.link = req.body.link;
 
-//     res.send(espaco);
-//     return;
+    //     res.send(espaco);
+    //     return;
+    // });
+
+    // app.delete('/api/espacos/:id', (req, res) => {
+
+    //     const espaco = espacoCultural.find(espaco => espaco.id === parseInt(req.params.id))
+    //     if (!espaco) return res.status(404).send("ID não foi encontrado");
+
+    //     const indice = espacoCultural.indexOf(espaco);
+    //     espacoCultural.splice(indice, 1);
+
+    //     res.send(espaco);
+    //     return;
+    // });
+
 // });
-
-// const ValidataData = (data) => {
-//     const schema = Joi.object({
-//         nome: Joi.string().min(3).max(50).required(),
-//         rua: Joi.string().min(1).max(200).alphanum().required(),
-//         bairro: Joi.string().min(1).max(50).alphanum().required(),
-//         cidade: Joi.string().min(1).max(50).alphanum().required(),
-//         estado: Joi.string().min(2).max(2).alphanum().required(),
-//         email: Joi.string().min(1).max(50).alphanum().required(),
-//         link: Joi.string().min(3).max(150).alphanum().required()
-
-//     });
-//     return schema.validate(data);
-// }
-
-// app.delete('/api/espacos/:id', (req, res) => {
-//     const espaco = espacos.find(espaco => espaco.id == parseInt(req.params.id));
-//     if (!espaco) return res.status(404).send("O espaco com o ID específico não foi encontrado!");
-
-//     const indice = espacos.indexOf(espaco);
-//     espacos.splice(indice, 1);
-
-//     res.send(espaco);
-//     return;
-// })

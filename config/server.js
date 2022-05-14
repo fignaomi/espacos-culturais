@@ -1,7 +1,7 @@
 const express = require('express');
 const consign = require('consign');
 
-const port = process.env.PORT || 3006;
+const port = process.env.PORT || 3000;
 const app = express();
 module.exports = () =>{
     

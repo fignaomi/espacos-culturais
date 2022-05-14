@@ -1,22 +1,17 @@
-// const { routes } = require('./config/server');
-const app = require('./config/server');
-//const routes = require('./app/routes/routes');
+const configExpress = require('./config/server');
+const conexao = require('./config/dbServer');
+const Tabela = require('./config/Tabela');
 
+conexao.connect(error => {
+    if (error) {
+        throw error;
+    };
 
-// const configExpress = require('./config/server');
-// const conexao = require('./config/dbServer');
-// const Tabela = require('./config/Tabela');
+    Tabela.init(conexao);
 
-// conexao.connect(error => {
-//     if (error) {
-//         throw error;
-//     };
+    app = configExpress();
 
-//     Tabela.init(conexao);
-
-//     app = configExpress();
-
-// });
+});
 
 // let espacos = [
 //     {
