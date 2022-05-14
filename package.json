@@ -1,0 +1,20 @@
+{
+  "name": "espacos-culturais",
+  "version": "1.0.0",
+  "description": "Atividade RESTfull",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Naomi Figueiredo",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.0",
+    "consign": "^0.1.6",
+    "express": "^4.18.1",
+    "joi": "^17.6.0",
+    "mysql": "^2.18.1",
+    "mysql2": "^2.3.3",
+    "nodemon": "^2.0.16"
+  }
+}
